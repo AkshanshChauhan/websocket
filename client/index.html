@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<style>
+    * {
+        margin: 0px;
+        padding: 0px;
+    }
+    
+    .control {
+        display: flex;
+        gap: 5px;
+    }
+    
+    #data {
+        justify-items: start;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        height: 500px;
+        overflow: scroll;
+        overflow-x: hidden;
+        border: 1px solid black;
+        margin-bottom: 10px;
+    }
+    
+    p {
+        padding: 10px;
+        background-color: rgb(244, 244, 244);
+    }
+    
+    input,
+    button {
+        padding: 10px;
+    }
+</style>
+
+<head>
+    <title>Socket.IO Client</title>
+    <div id="data"></div>
+    <div class="control">
+        <input type="text" id="input">
+        <button onclick="emitMessage(document.getElementById('input').value)">Send</button>
+    </div>
+    <script src="https://cdn.socket.io/4.1.3/socket.io.min.js"></script>
+    <script>
+        const socket = io('http://localhost:1000');
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        function emitMessage(msg) {
+            const p = document.createElement("p");
+            p.innerHTML = "<b>YOU</b> -> " + msg;
+            document.getElementById("data").appendChild(p);
+            socket.emit("msg", msg);
+        };
+
+        socket.on('msg', (data) => {
+            const p = document.createElement("p");
+            p.innerHTML = data;
+            document.getElementById("data").appendChild(p);
+        })
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+        });
+    </script>
+</head>
+
+<body>
+    <h1>Socket.IO Client</h1>
+</body>
+
+</html>
